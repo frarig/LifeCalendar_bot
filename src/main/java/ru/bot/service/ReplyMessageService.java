@@ -18,4 +18,8 @@ public class ReplyMessageService {
     public SendMessage getReplyMessage(long chatId, String message) {
         return new SendMessage(chatId, localeMessageService.getMessage(message));
     }
+
+    public SendMessage getReplyMessage(long chatId, String message, String languageLocale) {
+        return new SendMessage(chatId, localeMessageService.getMessage(message, languageLocale));
+    }
 }

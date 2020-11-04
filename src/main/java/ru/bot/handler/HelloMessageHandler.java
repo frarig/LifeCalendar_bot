@@ -25,9 +25,10 @@ public class HelloMessageHandler implements InputMessageHandler {
     public SendMessage handler(Message message) {
         int userId = message.getFrom().getId();
         long chatId = message.getChatId();
+        String languageLocale = message.getFrom().getLanguageCode();
 
         userDataCache.setUsersCurrentBotState(userId, BotState.ASK_DATE_OF_BIRTH);
-        return messageService.getReplyMessage(chatId, "hello");
+        return messageService.getReplyMessage(chatId, "hello", languageLocale);
     }
 
     @Override
