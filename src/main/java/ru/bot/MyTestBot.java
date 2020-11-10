@@ -1,22 +1,34 @@
 package ru.bot;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.bot.calendar.Calendar;
+import ru.bot.calendar.DateOfBirth;
+import ru.bot.data.PersonData;
 import ru.bot.data.UserDataCache;
 import ru.bot.handler.BotState;
 import ru.bot.handler.BotStateContext;
+import ru.bot.service.LocaleMessageService;
 import ru.bot.service.ReplyMessageService;
+import ru.bot.service.UserDataService;
+
+import static ru.bot.handler.BotStateContext.CALENDAR;
 
 public class MyTestBot extends TelegramWebhookBot {
 
     private final BotStateContext botStateContext;
     private final UserDataCache userDataCache;
-    private ReplyMessageService messageService;
     private final Calendar calendar;
+    @Autowired
+    private UserDataService userDataService;
+    @Autowired
+    private ReplyMessageService messageService;
 
     private String botUserName;
     private String botToken;
@@ -45,24 +57,46 @@ public class MyTestBot extends TelegramWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        int id = update.getMessage().getFrom().getId();
+        int userId = update.getMessage().getFrom().getId();
         long chatId = update.getMessage().getChatId();
+        String locale = update.getMessage().getFrom().getLanguageCode();
 
-        if (userDataCache.getUsersCurrentBotState(id).equals(BotState.PRINT_CALENDAR)) {
-            double num = calendar.getYear() / (double) 25;
-            int quantityMessage = (int) Math.ceil(num);
-            calendar.getCalendar();
+        if ((userDataCache.getUsersCurrentBotState(userId).equals(BotState.PRINT_CALENDAR)
+                || update.getMessage().getText().startsWith(CALENDAR))) {
 
-            for (int i = 0; i < quantityMessage; i++) {
+            PersonData personData = userDataService.getPersonProfileData(chatId);
+
+            if (personData != null) {
+                DateOfBirth dateOfBirth = DateOfBirth.getInstance();
+
+                dateOfBirth.setBirthDay(personData.getDateOfBirth());
+                calendar.setYear(Integer.parseInt(personData.getAge()));
+
                 try {
-                    execute(new SendMessage(chatId, calendar.getListOfCalendar().get(i)));
+                    calendarOutput(personData.getChatId(), locale, personData);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
+
+                userDataCache.setUsersCurrentBotState(userId, BotState.PRINT_CALENDAR);
             }
-            calendar.cleanCalendar();
         }
         return botStateContext.handlerUpdate(update);
+    }
+
+    private void calendarOutput(long chatId, String locale, PersonData personData) throws TelegramApiException {
+        double num = calendar.getYear() / (double) 25;
+        int quantityMessage = (int) Math.ceil(num);
+        calendar.getCompletedCalendar();
+
+        for (int i = 0; i < quantityMessage; i++) {
+            execute(new SendMessage(chatId, calendar.getListCalendar().get(i)));
+        }
+
+        execute(messageService.getReplyMessage(chatId, personData.getDateOfBirth(), "dateOfBirth",
+                personData.getAge(), "years", locale));
+
+        calendar.cleanCalendar();
     }
 
     public void setBotUserName(String botUserName) {
@@ -75,13 +109,5 @@ public class MyTestBot extends TelegramWebhookBot {
 
     public void setWebHookPath(String webHookPath) {
         this.webHookPath = webHookPath;
-    }
-
-    public ReplyMessageService getMessageService() {
-        return messageService;
-    }
-
-    public void setMessageService(ReplyMessageService messageService) {
-        this.messageService = messageService;
     }
 }
