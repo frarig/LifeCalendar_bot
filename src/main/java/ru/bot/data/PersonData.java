@@ -1,35 +1,30 @@
 package ru.bot.data;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.annotation.PropertyKey;
 import java.io.Serializable;
 
 /**
- * Данные вводимые пользователем
+ * Данные пользователя
  */
 
+@Document(collection = "users")
 public class PersonData implements Serializable {
-    private String id;
+    @Id
+    @PropertyKey
     private long chatId;
     private String dateOfBirth;
-    private int age;
-    private String calendar;
+    private String age;
 
     public PersonData() {
     }
 
-    public PersonData(String id, long chatId, String dateOfBirth, int age, String calendar) {
-        this.id = id;
+    public PersonData(long chatId, String dateOfBirth, String age) {
         this.chatId = chatId;
         this.dateOfBirth = dateOfBirth;
         this.age = age;
-        this.calendar = calendar;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public long getChatId() {
@@ -48,25 +43,16 @@ public class PersonData implements Serializable {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
-    }
-
-    public String getCalendar() {
-        return calendar;
-    }
-
-    public void setCalendar(String calendar) {
-        this.calendar = calendar;
     }
 
     @Override
     public String toString() {
-        return "PersonData{" + "id=" + id + ", dateOfBirth='" + dateOfBirth + '\'' +
-                ", age=" + age + ", calendar='" + calendar + '\'' + '}';
+        return "PersonData{" + "dateOfBirth='" + dateOfBirth + '\'' + ", age=" + age + '\'' + '}';
     }
 }
