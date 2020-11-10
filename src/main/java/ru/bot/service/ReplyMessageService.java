@@ -16,10 +16,38 @@ public class ReplyMessageService {
     }
 
     public SendMessage getReplyMessage(long chatId, String message) {
-        return new SendMessage(chatId, localeMessageService.getMessage(message));
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(localeMessageService.getMessage(message));
+
+        sendMessage.setReplyMarkup(new MainMenuService().getMainMenuKeyboard());
+
+        return sendMessage;
     }
 
     public SendMessage getReplyMessage(long chatId, String message, String languageLocale) {
-        return new SendMessage(chatId, localeMessageService.getMessage(message, languageLocale));
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(localeMessageService.getMessage(message, languageLocale));
+
+        sendMessage.setReplyMarkup(new MainMenuService().getMainMenuKeyboard());
+
+        return sendMessage;
+    }
+
+    public SendMessage getReplyMessage(long chatId, String firstMessage, String secondMessage,
+                                       String thirdMessage, String fourthMessage, String languageLocale) {
+
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(firstMessage + localeMessageService.getMessage(secondMessage, languageLocale)
+                + thirdMessage + localeMessageService.getMessage(fourthMessage, languageLocale));
+
+        sendMessage.setReplyMarkup(new MainMenuService().getMainMenuKeyboard());
+
+        return sendMessage;
     }
 }
