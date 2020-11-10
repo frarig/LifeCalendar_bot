@@ -12,7 +12,7 @@ public class Calendar {
     private int year;
     private String[][] life;
     private final StringBuilder calendar = new StringBuilder();
-    private final List<String> listOfCalendars = new ArrayList<>();
+    private final List<String> listCalendars = new ArrayList<>();
 
     private void calendarAppend() {
         for (String[] a : life) {
@@ -30,12 +30,14 @@ public class Calendar {
 
             if (i < dateOfBirth.getYear()) {
                 Arrays.fill(life[i], "\u274C");
+
             } else if (i == dateOfBirth.getYear()) {
 
                 for (int j = 0; j < WEEKS; j++) {
 
                     if (j < dateOfBirth.getWeek()) {
                         life[i][j] = "\u274C";
+
                     } else if (j >= dateOfBirth.getWeek()) {
                         life[i][j] = "\u2705";
                     }
@@ -46,38 +48,38 @@ public class Calendar {
         }
     }
 
-    public void getCalendar() {
+    public void getCompletedCalendar() {
         life = new String[year][WEEKS];
 
         fillingTheCalendar();
         calendarAppend();
 
         if (year > 25 && year < 51) {
-            listOfCalendars.add(calendar.substring(0,1300));    // 25
-            listOfCalendars.add(calendar.substring(1300)); // 50
+            listCalendars.add(calendar.substring(   0,1300)); // 25
+            listCalendars.add(calendar.substring(1300)); // 50
 
         } else if (year > 50 && year < 76) {
-            listOfCalendars.add(calendar.substring(0,1300));    // 25
-            listOfCalendars.add(calendar.substring(1300,2600)); // 50
-            listOfCalendars.add(calendar.substring(2600)); // 75
+            listCalendars.add(calendar.substring(   0,1300)); // 25
+            listCalendars.add(calendar.substring(1300,2600)); // 50
+            listCalendars.add(calendar.substring(2600)); // 75
 
         } else if (year > 75 && year < 101) {
-            listOfCalendars.add(calendar.substring(0,1300));    // 25
-            listOfCalendars.add(calendar.substring(1300,2600)); // 50
-            listOfCalendars.add(calendar.substring(2600,3900)); // 75
-            listOfCalendars.add(calendar.substring(3900)); // 100
+            listCalendars.add(calendar.substring(   0,1300)); // 25
+            listCalendars.add(calendar.substring(1300,2600)); // 50
+            listCalendars.add(calendar.substring(2600,3900)); // 75
+            listCalendars.add(calendar.substring(3900)); // 100
         } else {
-            listOfCalendars.add(calendar.toString());    // 25
+            listCalendars.add(calendar.toString());           // 25
         }
     }
 
     public void cleanCalendar() {
         calendar.setLength(0);
-        listOfCalendars.clear();
+        listCalendars.clear();
     }
 
-    public List<String> getListOfCalendar() {
-        return listOfCalendars;
+    public List<String> getListCalendar() {
+        return listCalendars;
     }
 
     public void setYear(int year) {
