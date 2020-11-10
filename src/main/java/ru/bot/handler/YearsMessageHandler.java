@@ -4,11 +4,14 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.bot.calendar.Calendar;
+import ru.bot.calendar.DateOfBirth;
+import ru.bot.data.PersonData;
 import ru.bot.data.UserDataCache;
 import ru.bot.service.ReplyMessageService;
+import ru.bot.service.UserDataService;
 
 /**
- * Спрашивает пользователя сколько считать лет
+ * Спрашивает пользователя на сколько лет рассчитать календарь
  */
 
 @Component
@@ -16,8 +19,12 @@ public class YearsMessageHandler implements InputMessageHandler {
     private final ReplyMessageService messageService;
     private final UserDataCache userDataCache;
     private final Calendar calendar;
+    private final UserDataService userDataService;
 
-    public YearsMessageHandler(ReplyMessageService messageService, UserDataCache userDataCache, Calendar calendar) {
+    public YearsMessageHandler(ReplyMessageService messageService, UserDataCache userDataCache,
+                               Calendar calendar, UserDataService userDataService) {
+
+        this.userDataService = userDataService;
         this.messageService = messageService;
         this.userDataCache = userDataCache;
         this.calendar = calendar;
@@ -40,6 +47,9 @@ public class YearsMessageHandler implements InputMessageHandler {
                 return messageService.getReplyMessage(chatId, "errorOfMaximumLimit");
             } else {
                 calendar.setYear(years);
+
+                saveUser(userId, chatId, usersAnswer);
+
                 userDataCache.setUsersCurrentBotState(userId,BotState.PRINT_CALENDAR);
                 return messageService.getReplyMessage(chatId, "nice");
             }
@@ -61,5 +71,16 @@ public class YearsMessageHandler implements InputMessageHandler {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    private void saveUser(int userId, long chatId, String usersAnswer) {
+        DateOfBirth dateOfBirth = DateOfBirth.getInstance();
+        PersonData personData = userDataCache.getUserProfileData(userId);
+
+        personData.setChatId(chatId);
+        personData.setDateOfBirth(dateOfBirth.getBirthDay());
+        personData.setAge(usersAnswer);
+
+        userDataService.savePersonProfileData(personData);
     }
 }

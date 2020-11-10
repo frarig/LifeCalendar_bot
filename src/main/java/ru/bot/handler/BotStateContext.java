@@ -15,6 +15,9 @@ import java.util.Map;
 @Component
 public class BotStateContext {
 
+    public static final String START_COMMAND = "/start";
+    public static final String HELLO_BUTTON = "Hello";
+    public static final String CALENDAR = "Calendar";
     private static final Logger log = LoggerFactory.getLogger(BotStateContext.class);
     private final Map<BotState, InputMessageHandler> messageHandlers = new HashMap<>();
     private final UserDataCache userDataCache;
@@ -37,7 +40,7 @@ public class BotStateContext {
         int userId = message.getFrom().getId();
         BotState botState;
 
-        if (inputMessage.equals("/start") || inputMessage.equals("Hello")) {
+        if (inputMessage.equals(START_COMMAND) || inputMessage.equals(HELLO_BUTTON)) {
             botState = BotState.GREETING;
         } else {
             botState = userDataCache.getUsersCurrentBotState(userId);

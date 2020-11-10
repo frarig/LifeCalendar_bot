@@ -25,9 +25,10 @@ public class CalendarMessageHandler implements InputMessageHandler {
     public SendMessage handler(Message message) {
         int userId = message.getFrom().getId();
         long chatId = message.getChatId();
+        String languageLocale = message.getFrom().getLanguageCode();
 
         userDataCache.setUsersCurrentBotState(userId, BotState.GREETING);
-        return messageService.getReplyMessage(chatId, "printCalendarInfo");
+        return messageService.getReplyMessage(chatId, "printCalendarInfo", languageLocale);
     }
 
     @Override
