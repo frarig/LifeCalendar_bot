@@ -8,7 +8,7 @@ import java.util.List;
 
 @Component
 public class Calendar {
-    private static final int WEEKS = 52;
+    private static final int WEEKS_IN_YEAR = 52;
     private int year;
     private String[][] life;
     private final StringBuilder calendar = new StringBuilder();
@@ -27,29 +27,28 @@ public class Calendar {
         dateOfBirth.findingThePeriodOfLife();
 
         for (int i = 0; i < life.length; i++) {
-
             if (i < dateOfBirth.getYear()) {
                 Arrays.fill(life[i], "\u274C");
 
             } else if (i == dateOfBirth.getYear()) {
+                int weeks = dateOfBirth.getWeek();
+                for (int j = 0; j < WEEKS_IN_YEAR; j++) {
 
-                for (int j = 0; j < WEEKS; j++) {
-
-                    if (j < dateOfBirth.getWeek()) {
+                    if (j < weeks) {
                         life[i][j] = "\u274C";
 
-                    } else if (j >= dateOfBirth.getWeek()) {
+                    } else {
                         life[i][j] = "\u2705";
                     }
                 }
-            } else if (i > dateOfBirth.getYear()) {
+            } else {
                 Arrays.fill(life[i], "\u2705");
             }
         }
     }
 
     public void getCompletedCalendar() {
-        life = new String[year][WEEKS];
+        life = new String[year][WEEKS_IN_YEAR];
 
         fillingTheCalendar();
         calendarAppend();

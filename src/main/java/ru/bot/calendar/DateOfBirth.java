@@ -13,7 +13,6 @@ public class DateOfBirth {
     private static DateOfBirth instance;
 
     private DateOfBirth() {
-
     }
 
     public static DateOfBirth getInstance() {
@@ -34,7 +33,7 @@ public class DateOfBirth {
     }
 
     public int getWeek() {
-        return (int) Math.ceil((day / 7d) + (month * 4));
+        return (int) Math.ceil((day / 7d) + (month * 4.285));
     }
 
     public int getYear() {
