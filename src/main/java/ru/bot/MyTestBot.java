@@ -88,13 +88,23 @@ public class MyTestBot extends TelegramWebhookBot {
         double num = calendar.getYear() / (double) 25;
         int quantityMessage = (int) Math.ceil(num);
         calendar.getCompletedCalendar();
+        String years = "year";
 
         for (int i = 0; i < quantityMessage; i++) {
             execute(new SendMessage(chatId, calendar.getListCalendar().get(i)));
         }
 
+        int year = Integer.parseInt(personData.getAge());
+        if (year < 1 && locale.equals("en")) {
+            years = "years";
+        } else  if (year > 1 && year < 5 && locale.equals("ru")) {
+            years = "years";
+        } else if (year > 4 && locale.equals("ru")) {
+            years = "over5years";
+        }
+
         execute(messageService.getReplyMessage(chatId, personData.getDateOfBirth(), "dateOfBirth",
-                personData.getAge(), "years", locale));
+                personData.getAge(), years, locale));
 
         calendar.cleanCalendar();
     }
